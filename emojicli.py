@@ -6,11 +6,6 @@ import sys
 from pywsd import disambiguate
 from pywsd.similarity import max_similarity
 
-from flask import request, url_for
-from flask.ext.api import FlaskAPI, status, exceptions
-
-app = FlaskAPI('emojipy')
-
 def load_emojis(filename):
     syn_emoji = dict()
     word_emoji = dict()
@@ -44,29 +39,18 @@ def token_to_emoji(token_tuple):
     return token
 
 def text_to_emoji(text):
-    tokens = disambiguate(text, algorithm=max_similarity, 
-        similarity_option='wup', keepLemmas=True)
+    tokens = disambiguate(text, algorithm=max_similarity,
+                          similarity_option='wup', keepLemmas=True)
     return " ".join([token_to_emoji(t) for t in tokens])
 
 
-@app.route("/", methods=['GET', 'POST'])
-def emojipy():
-    text = str(request.args['text'])
-    msg = ''
-    if text == '':
-        text = 'i love cheesecake'
-        msg = "Don't be shy. Enter some text!"
-    return {
-        'text': text,
-        'emojid': text_to_emoji(text),
-        'msg': msg
-    }
-
-reload(sys)  
+reload(sys)
 sys.setdefaultencoding('utf8')
 print "Server loading"
-syn_emoji, word_emoji = load_emojis('emoji_mapping_sense.csv')    
+syn_emoji, word_emoji = load_emojis('emoji_mapping_sense.csv')
 print "ready"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    while True:
+        #input = raw_input("Please enter something: ")
+        print "", text_to_emoji('it was the best of times')
